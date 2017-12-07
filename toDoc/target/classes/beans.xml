@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+	<!-- model 설정 -->
+
+	<context:property-placeholder location="classpath:db.properties" />
+	
+	<!-- connection Pool 객체 등록 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.url}"
+		p:username="${jdbc.username}" p:password="${jdbc.password}" />
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="dataSource" p:configLocation="classpath:SqlMapConfig.xml" />
+	<!-- configLocation : mybatis프레임웍 초기화 및 SqlSessionFactory 만들 수 잇도록 설정파일 
+		알려주기 -->
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"
+		c:sqlSessionFactory-ref="sqlSessionFactory" />
+		
+	<bean id="hospitalDao" class="com.scsa.model.dao.HospitalDAOImpl"
+			p:sqlSession-ref="sqlSession" />
+	<bean id="hospitalService" class="com.scsa.model.service.HospitalServiceImpl"
+			p:hospitalDao-ref="hospitalDao"/>
+		
+	<bean id="doctorDao" class="com.scsa.model.dao.DoctorDAOImpl"
+			p:sqlSession-ref="sqlSession" />
+	<bean id="doctorService" class="com.scsa.model.service.DoctorServiceImpl"
+			p:doctorDao-ref="doctorDao"/>
+	
+	<bean id="treatmentDao" class="com.scsa.model.dao.TreatmentDAOImpl"
+			p:sqlSession-ref="sqlSession" />
+	<bean id="treatmentService" class="com.scsa.model.service.TreatmentServiceImpl"
+			p:treatmentDao-ref="treatmentDao"/>	
+	
+	<bean id="patientDao" class="com.scsa.model.dao.PatientDAOImpl"
+			p:sqlSession-ref="sqlSession" />
+	<bean id="patientService" class="com.scsa.model.service.PatientServiceImpl"
+			p:patientDao-ref="patientDao"/>		
+</beans>

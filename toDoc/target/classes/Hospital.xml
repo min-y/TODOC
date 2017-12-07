@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Hospital">
+
+	<insert id="insertHospital" parameterType="Hospital">
+		INSERT INTO hospital(hosCode, hosPassword, hosName, hosLatitude, hosLongitude, hosAddress, hosType, hosTel, hosInfo, hosImage) 
+		VALUES		(#{hosCode}, #{hosPassword}, #{hosName}, #{hosLatitude}, #{hosLongitude}, #{hosAddress}, #{hosType}, #{hosTel}, #{hosInfo}, #{hosImage});
+	</insert>
+	
+	<delete id="deleteHospital" parameterType="String">
+		DELETE FROM hospital WHERE hosCode=#{hosCode}
+	</delete>
+
+	<update id="updateHospital" parameterType="Hospital">
+		UPDATE 	hospital 
+		SET 	hosName=#{hosName}, hosAddress=#{hosAddress}, hosTel=#{hosTel}, hosInfo=#{hosInfo}
+		WHERE 	hosCode=#{hosCode}
+	</update>
+	
+	<sql id="basicHospitalSql">
+		SELECT 	hosCode, hosPassword, hosName, hosLatitude, hosLongitude, hosAddress, hosType, hosTel, hosInfo, hosImage
+		FROM 	hospital
+	</sql>
+	
+	<!-- select된 레코드 한 줄을 내가 지정한 VO에 어떻게 매칭시킬지  -->
+	<resultMap type="Hospital" id="HospitalResultMap">
+		<id column="hosCode" property="hosCode"/>
+		<result column="hosPassword" property="hosPassword"/>
+		<result column="hosName" property="hosName"/>
+		<result column="hosLatitude" property="hosLatitude"/>
+		<result column="hosLongitude" property="hosLongitude"/>
+		<result column="hosAddress" property="hosAddress"/>
+		<result column="hosType" property="hosType"/>
+		<result column="hosTel" property="hosTel"/>
+		<result column="hosInfo" property="hosInfo"/>
+		<result column="hosImage" property="hosImage"/>
+	</resultMap>
+	
+	<resultMap type="HospitalTimeTable" id="HospitalTimeTableResultMap">
+		<id column="hosCode" property="hosCode"/>
+		<result column="hosDay" property="hosDay"/>
+		<result column="hosOpen" property="hosOpen"/>
+		<result column="hosClose" property="hosClose"/>
+		<result column="hosLunchStart" property="hosLunchStart"/>
+		<result column="hosLunchEnd" property="hosLunchEnd"/>
+	</resultMap>
+	
+	<select id="selectHospital" parameterType="String" resultMap="HospitalResultMap">
+		<include refid="basicHospitalSql"/>
+		WHERE	hosCode=#{hosCode}
+	</select>
+	
+	<select id="selectHospitalTimeTable" parameterType="String" resultMap="HospitalTimeTableResultMap">
+		SELECT 	hosDay, hosOpen, hosClose, hosLunchStart, hosLunchEnd 
+		FROM 	hospital_timetable
+		WHERE 	hosCode=#{hosCode}
+	</select>
+
+	<update id="updateHospitalTimeTable" parameterType="HospitalTimeTable">
+		UPDATE 	hospital_timetable 
+		SET 	hosOpen=#{hosOpen}, hosClose=#{hosClose}, hosLunchStart=#{hosLunchStart}, hosLunchEnd=#{hosLunchEnd}
+		WHERE 	hosCode=#{hosCode} and hosDay=#{hosDay}
+	</update>
+
+	<select id="login" parameterType="Hospital" resultMap="HospitalResultMap">
+		<include refid="basicHospitalSql"/>
+		WHERE	hosCode=#{hosCode} and hosPassword=#{hosPassword}
+	</select>
+</mapper>
