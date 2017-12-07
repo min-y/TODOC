@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- mybatis 설정 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.scsa.model.vo.Doctor" alias="Doctor" />
+		<typeAlias type="com.scsa.model.vo.DoctorTimeTable" alias="DoctorTimeTable" />
+		<typeAlias type="com.scsa.model.vo.Hospital" alias="Hospital" />
+		<typeAlias type="com.scsa.model.vo.HospitalTimeTable" alias="HospitalTimeTable" />
+		<typeAlias type="com.scsa.model.vo.Patient" alias="Patient" />
+		<typeAlias type="com.scsa.model.vo.Treatment" alias="Treatment" />
+		<typeAlias type="com.scsa.model.vo.TreatmentHistory" alias="TreatmentHistory" />
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="Hospital.xml" />
+ 		<mapper resource="Doctor.xml" />
+ 		<mapper resource="Treatment.xml" />
+<!-- 		<mapper resource="Patient.xml" /> 
+		<mapper resource="DoctorTimeTable.xml" />
+		<mapper resource="HospitalTimeTable.xml" />
+		
+		-->
+	</mappers>
+
+</configuration>

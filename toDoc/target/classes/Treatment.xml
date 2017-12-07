@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Treatment">
+
+	<insert id="insertTreatment" parameterType="Treatment">
+		INSERT INTO treatment(treatCode, hosCode, patCode,treatTime, docCode, treatStatus) 
+   		VALUES	(#{hosCode}||to_char(sysdate, 'yymmdd-hh24miss'),#{hosCode},  #{patCode},sysdate,#{docCode},1)
+	</insert>
+	
+	<insert id="insertToHistory" parameterType="TreatmentHistory">
+		insert into treatment_history (treatCode, hosCode, docCode, patCode, treatDate, recCode, recFile)
+		values(#{treatCode},#{hosCode},#{docCode},#{patCode},sysdate,'null','null')		
+	</insert>
+	
+	<delete id="deleteTreatment" parameterType="String">
+		DELETE FROM treatment WHERE treatCode=#{treatCode}
+	</delete>
+
+	<update id="updateTreatment" parameterType="String">
+		UPDATE 	treatment 
+		SET 	treatStatus=treatStatus+1
+		WHERE 	treatCode=#{treatCode}
+	</update>
+	
+	<sql id="basicTreatmentSql">
+		SELECT 	treatCode, hosCode, patCode, to_char(treatTime,'yy/mm/dd hh24:mi') treatTime, docCode, treatStatus
+		FROM 	treatment
+	</sql>
+	
+	<!-- select된 레코드 한 줄을 내가 지정한 VO에 어떻게 매칭시킬지  -->
+	<resultMap type="Treatment" id="TreatmentResultMap">
+		<id column="treatCode" property="treatCode"/>
+		<result column="hosCode" property="hosCode"/>
+		<result column="patCode" property="patCode"/>
+		<result column="treatTime" property="treatTime"/>
+		<result column="docCode" property="docCode"/>
+		<result column="treatStatus" property="treatStatus"/>
+		<result column="patName" property="patName"/>
+		<result column="docName" property="docName"/>
+	</resultMap>
+	
+	<resultMap type="TreatmentHistory" id="HistoryResultMap">
+		<id column="treatCode" property="treatCode"/>
+		<result column="hosCode" property="hosCode"/>
+		<result column="docCode" property="docCode"/>
+		<result column="docName" property="docName"/>
+		<result column="patCode" property="patCode"/>
+		<result column="patName" property="patName"/>
+		<result column="treatDate" property="treatDate"/>
+		<result column="preCode" property="preCode"/>
+		<result column="recCode" property="recCode"/>
+		<result column="recFile" property="recFile"/>
+	</resultMap>
+	
+	<select id="selectTreatmentList"  parameterType="String" resultMap="TreatmentResultMap">
+		SELECT 	t.treatCode, t.hosCode, t.patCode, to_char(t.treatTime,'yy/mm/dd hh24:mi') treatTime, 
+                t.docCode, t.treatStatus, p.patName, d.docName
+		FROM 	treatment t, patient p, doctor d
+		where   t.hosCode=#{hosCode}
+		and		t.treatStatus!=5
+		and		t.treatStatus!=3
+		and       t.patCode=p.patCode
+		and       t.docCode=d.docCode
+		order by treatTime
+	</select>
+	
+	<select id="selectHistoryList"  parameterType="String" resultMap="HistoryResultMap">
+		SELECT 	t.treatCode, p.patName, p.patCode, to_char(t.treatDate,'yy/mm/dd hh24:mi') treatDate, d.docName
+		FROM 	treatment_history t, patient p, doctor d
+		where   t.hosCode=#{hosCode}
+		and     t.patCode=p.patCode
+		and     t.docCode=d.docCode
+		order by treatDate
+	</select>
+	
+	<select id="selectHistoryListWithMultiCondition" parameterType="map" resultMap="HistoryResultMap">
+      SELECT 	t.treatCode, p.patName, p.patCode, to_char(t.treatDate,'yy/mm/dd hh24:mi') treatDate, d.docName
+		FROM 	treatment_history t, patient p, doctor d
+        where   t.hosCode=#{hosCode}
+        and     t.patCode=p.patCode
+		and     t.docCode=d.docCode
+         <if test="patName !=null">
+           	and p.patName like '%'||#{patName}||'%'
+         </if>
+         <if test="startDate !=null and endDate!=null">
+            and trunc(t.treatDate) between #{startDate} and #{endDate}
+         </if> 
+        order by treatDate
+   </select>
+	
+	<select id="selectNextTreatmentList" parameterType="String" resultMap="TreatmentResultMap">
+		SELECT 	t.treatCode, t.hosCode, t.patCode, to_char(t.treatTime,'yy/mm/dd hh24:mi') treatTime, 
+		    	t.docCode, t.treatStatus, p.patName, d.docName
+		FROM 	treatment t, patient p, doctor d
+		where   (t.docCode, t.treatTime) IN (   SELECT      docCode, min(treatTime)
+			                                    FROM        treatment
+			                                    WHERE       hosCode = #{hosCode} and treatStatus=2
+			                                    GROUP BY    docCode )
+		and     t.patCode=p.patCode
+		and     t.docCode=d.docCode
+		order by treatTime
+	</select>
+	
+	<select id="selectTreatmentListByDoctor" parameterType="String" resultMap="TreatmentResultMap">
+		SELECT 	t.treatCode, t.hosCode, t.patCode, to_char(t.treatTime,'yy/mm/dd hh24:mi') treatTime, 
+            t.docCode, t.treatStatus, p.patName, d.docName
+		FROM 	treatment t, patient p, doctor d
+		where   t.hosCode=#{hosCode}
+		and		t.treatStatus!=5
+		and     t.patCode=p.patCode
+		and     t.docCode=d.docCode
+		and		t.docCode=#{docCode}
+		order by treatTime
+	</select>
+</mapper>

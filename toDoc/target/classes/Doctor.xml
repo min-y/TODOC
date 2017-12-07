@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Doctor">
+
+	<insert id="insertDoctor" parameterType="Doctor">
+		INSERT INTO doctor(docCode, hosCode, docName, docPart) 
+		VALUES		(#{hosCode}||doctor_seq.NEXTVAL, #{hosCode}, #{docName}, #{docPart})
+	</insert>
+	
+	<delete id="deleteDoctor" parameterType="String">
+		DELETE FROM doctor WHERE docCode=#{docCode}
+	</delete>
+
+	<update id="updateDoctor" parameterType="Doctor">
+		UPDATE 	doctor 
+		SET 	docName=#{docName}, docPart=#{docPart}
+		WHERE 	docCode=#{docCode}
+	</update>
+	
+	<sql id="basicDoctorSql">
+		SELECT 	docCode, hosCode, docName, docPart, docImage
+		FROM 	doctor
+	</sql>
+	
+	<!-- select된 레코드 한 줄을 내가 지정한 VO에 어떻게 매칭시킬지  -->
+	<resultMap type="Doctor" id="DoctorResultMap">
+		<id column="docCode" property="docCode"/>
+		<result column="hosCode" property="hosCode"/>
+		<result column="docName" property="docName"/>
+		<result column="docPart" property="docPart"/>
+		<result column="docImage" property="docImage"/>
+	</resultMap>
+	
+	<select id="selectDoctorList" parameterType="String" resultMap="DoctorResultMap">
+		<include refid="basicDoctorSql"/>
+		WHERE	hosCode=#{hosCode}
+		ORDER BY docName
+	</select>
+
+</mapper>
