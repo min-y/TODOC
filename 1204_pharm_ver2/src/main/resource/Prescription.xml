@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="prescription">
+
+	<sql id="selectPrescriptionSql">
+		select preCode,
+			InsuranceType,
+			IssueDate,
+			IssueNo,
+			hosCode,
+			patName,
+			patSocialNo,
+			hosName,
+			hosTel,
+			sickCode,
+			docName,
+			docCode,
+			valDay
+		from prescription
+	</sql>
+
+	<resultMap type="Prescription" id="PrescriptionResultMap">
+		<id column="preCode" property="preCode"/>
+		<result column="InsuranceType" property="insuranceType"/> 
+		<result column="IssueDate" property="issueDate"/> 
+		<result column="IssueNo" property="issueNo"/> 
+		<result column="hosCode" property="hosCode"/> 
+		<result column="patName" property="patName"/> 
+		<result column="patSocialNo" property="patSocialNo"/> 
+		<result column="hosName" property="hosName"/> 
+		<result column="hosTel" property="hosTel"/>
+		<result column="sickCode" property="sickCode"/>
+		<result column="docName" property="docName"/>
+		<result column="docCode" property="docCode"/>
+		<result column="valDay" property="valDay"/>
+	</resultMap>
+
+	<resultMap type="Prescription" id="PrescriptionJoinMedicineListResultMap">
+		<id column="preCode" property="preCode"/>
+		<result column="InsuranceType" property="insuranceType"/> 
+		<result column="IssueDate" property="issueDate"/> 
+		<result column="IssueNo" property="issueNo"/> 
+		<result column="hosCode" property="hosCode"/> 
+		<result column="patName" property="patName"/> 
+		<result column="patSocialNo" property="patSocialNo"/> 
+		<result column="hosName" property="hosName"/> 
+		<result column="hosTel" property="hosTel"/>
+		<result column="sickCode" property="sickCode"/>
+		<result column="docName" property="docName"/>
+		<result column="docCode" property="docCode"/>
+		<result column="valDay" property="valDay"/>
+		<collection property="prescriptionMedicineList" resultMap="prescriptionMedicineList.PrescriptionMedicineListResultMap"></collection>
+	</resultMap>
+</mapper>

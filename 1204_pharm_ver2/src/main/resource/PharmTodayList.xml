@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pharmTodayList">
+
+	<!-- 대기목록  -->
+	<select id="selectWaitList" resultMap="PharmTodayListJoinResultMap" parameterType="String">
+		select  t.pharmcode, t.precode, t.accdate, t.amount, t.prestatus, p.patname
+		from  	pharm_todaylist t, prescription p
+		where 	t.preStatus=1
+		and   	t.pharmCode=#{pharmCode}
+		and 	t.preCode=p.preCode
+	</select>
+	
+	<!-- 대기목록에서 승인목록으로 -->
+	<update id="updateWaitList" parameterType="String">
+		update 	pharm_todaylist
+		set 	preStatus=2
+		where 	preCode = #{preCode}
+	</update>
+	
+	<!-- 승인목록 -->
+	<select id="selectAcceptList" resultMap="PharmTodayListJoinResultMap" parameterType="String">
+		select  t.pharmcode, t.precode, t.accdate, t.amount, t.prestatus, p.patname
+		from  	pharm_todaylist t, prescription p 
+		where 	t.preStatus=2
+		and   	t.pharmCode=#{pharmCode}
+		and 	t.preCode=p.preCode
+	</select>
+	
+	<!-- 승인목록에서 done 목록으로 넘어가니까 pharm_todaylist 에서는 delete, prescription_history 에 insert -->
+	<delete id="deleteTodayList" parameterType="String">
+		delete from pharm_todaylist
+		where preCode = #{preCode}
+	</delete>
+	
+	<insert id="insertPrescriptionHistory" parameterType="PrescriptionHistory">
+	insert into prescription_history(pharmCode,preCode,accDate,amount) 
+	values(#{pharmCode},#{preCode},sysdate,#{amount})
+	</insert>
+	
+	<select id="findPharmTodayListByPreCode" resultMap="PharmTodayListJoinResultMap" parameterType="String">
+		select  t.pharmcode, t.precode, t.amount, p.patname, p.patSocialNo
+		from  	pharm_todaylist t, prescription p 
+		where 	t.preCode=#{preCode}
+		and 	t.preCode=p.preCode
+	</select>
+	
+	<select id="findPharmTodayListByPreCodewithMedicineList" resultMap="PharmTodayListJoinJoinResultMap" parameterType="String">
+		select  *
+		from  	prescription p, pharm_todaylist t, prescription_medicine_list m
+		where 	p.preCode=#{preCode}
+		and 	p.preCode=t.preCode
+		and		t.preCode=m.preCode(+)
+	</select>
+
+	<!--  -->
+	<sql id="selectPharmTodayListSql">
+		select pharmCode,
+			preCode,
+			accDate,
+			amount,
+			preStatus
+		from pharm_todaylist
+	</sql>
+	
+	<resultMap type="PharmTodayList" id="PharmTodayListResultMap">
+		<id column="pharmCode" property="pharmCode"/>
+		<result column="preCode" property="preCode"/> 
+		<result column="accDate" property="accDate"/> 
+		<result column="amount" property="amount"/> 
+		<result column="preStatus" property="preStatus"/> 
+	</resultMap>
+
+	<resultMap type="PharmTodayList" id="PharmTodayListJoinResultMap">
+		<id column="pharmCode" property="pharmCode"/>
+		<id column="preCode" property="preCode"/> 
+		<result column="accDate" property="accDate"/> 
+		<result column="amount" property="amount"/> 
+		<result column="preStatus" property="preStatus"/> 
+		<association property="prescription" resultMap="prescription.PrescriptionResultMap"></association>
+	</resultMap>
+	
+	<resultMap type="PharmTodayList" id="PharmTodayListJoinJoinResultMap">
+		<id column="pharmCode" property="pharmCode"/>
+		<id column="preCode" property="preCode"/> 
+		<result column="accDate" property="accDate"/> 
+		<result column="amount" property="amount"/> 
+		<result column="preStatus" property="preStatus"/> 
+		<association property="prescription" resultMap="prescription.PrescriptionJoinMedicineListResultMap"></association>
+	</resultMap>
+</mapper>

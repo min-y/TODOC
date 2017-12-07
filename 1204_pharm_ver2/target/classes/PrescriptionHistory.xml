@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="prescriptionHistory">
+
+	<select id="selectDoneList" resultMap="PrescriptionHistoryJoinResultMap" parameterType="String">
+		select 		*
+		from 		prescription p, prescription_history h 
+		where  		h.pharmCode=#{pharmCode}
+		and 		h.preCode=p.preCode
+		order by 	accDate desc
+	</select>
+	
+	<select id="selectDoneDetail" resultMap="PrescriptionHistoryJoinResultMap" parameterType="String">
+		select 		*
+		from 		prescription p, prescription_history h
+		where  		h.preCode=#{preCode}
+		and 		h.preCode=p.preCode
+	</select>
+	
+	 <select id="selectDoneDetailwithMedicineList" resultMap="PrescriptionHistoryJoinJoinResultMap" parameterType="String">
+		select 		*
+		from 		prescription p, prescription_history h, prescription_medicine_list m
+		where  		p.preCode=#{preCode}
+		and 		p.preCode=h.preCode
+		and			h.precode=m.preCode(+)
+	</select> 
+	
+	<select id="selectDoneListWithMultiCondition" parameterType="map" resultMap="PrescriptionHistoryJoinResultMap">
+		select  t.pharmcode, t.precode, t.accdate, t.amount, p.patname
+		from  	prescription_history t, prescription p
+		where 	t.pharmCode=#{pharmCode}
+				and t.preCode=p.preCode
+			<if test="patname !=null">
+				and patname like '%'||#{patname}||'%'
+			</if>
+			<if test="dateone !=null and datetwo!=null">
+				and trunc(accdate) between #{dateone} and #{datetwo}
+			</if>
+	</select>
+
+	<resultMap type="PrescriptionHistory" id="PrescriptionHistoryResultMap">
+		<id column="pharmCode" property="pharmCode"/>
+		<id column="preCode" property="preCode"/> 
+		<result column="accDate" property="accDate"/> 
+		<result column="amount" property="amount"/> 
+	</resultMap>
+	
+	<resultMap type="PrescriptionHistory" id="PrescriptionHistoryJoinResultMap">
+		<id column="pharmCode" property="pharmCode"/>
+		<id column="preCode" property="preCode"/> 
+		<result column="accDate" property="accDate"/> 
+		<result column="amount" property="amount"/>
+		<association property="prescription" resultMap="prescription.PrescriptionResultMap"></association>
+	</resultMap>
+	
+	<resultMap type="PrescriptionHistory" id="PrescriptionHistoryJoinJoinResultMap">
+		<id column="pharmCode" property="pharmCode"/>
+		<id column="preCode" property="preCode"/> 
+		<result column="accDate" property="accDate"/> 
+		<result column="amount" property="amount"/>
+		<association property="prescription" resultMap="prescription.PrescriptionJoinMedicineListResultMap"></association>
+	</resultMap>
+</mapper>

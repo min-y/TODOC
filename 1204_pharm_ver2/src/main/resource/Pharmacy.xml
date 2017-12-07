@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pharmacy">
+
+	<select id="loginPharm" resultMap="PharmResultMap" parameterType="Pharmacy">
+		<include refid="selectPharmSql"></include>
+		where pharmCode=#{pharmCode}
+		and pharmPassword=#{pharmPassword}
+	</select>
+	
+	<select id="selectPharm" resultMap="PharmResultMap" parameterType="String">
+		<include refid="selectPharmSql"></include>
+		where pharmCode=#{pharmCode}
+	</select>
+	
+	<sql id="selectPharmSql">
+		select pharmCode,
+			pharmPassword,
+			pharmName,
+			pharmLongitude,
+			pharmLatitude,
+			pharmAddress,
+			pharmTel
+		from pharmacy
+	</sql>
+
+	<resultMap type="Pharmacy" id="PharmResultMap">
+		<id column="pharmCode" property="pharmCode"/>
+		<result column="pharmPassword" property="pharmPassword"/> 
+		<result column="pharmName" property="pharmName"/> 
+		<result column="pharmLongitude" property="pharmLongitude"/> 
+		<result column="pharmLatitude" property="pharmLatitude"/> 
+		<result column="pharmAddress" property="pharmAddress"/> 
+		<result column="pharmTel" property="pharmTel"/> 
+	</resultMap>
+
+</mapper>
