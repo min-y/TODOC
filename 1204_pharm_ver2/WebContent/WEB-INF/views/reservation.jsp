@@ -146,7 +146,9 @@ function denyFunc(preCode){
 				<h3>${sessionScope.pharmName}</h3>
 				현재 <span style="color: red">${sessionScope.waitNum}</span>명 대기중
 				<p>
-					<a href="logout.do">로그아웃</a>
+					<form action="logout.do">
+						<input type="submit" class="button" value="로그아웃"/>
+					</form>
 				</p>
 				</section> </section>
 				<section class="5u" style="float: right;">

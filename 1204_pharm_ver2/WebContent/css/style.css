@@ -28,6 +28,7 @@
     	text-align: center;
     	font-size: 13pt;
     	font-family: 'Jeju Gothic', serif;
+    	cursor:pointer;
 	}
 	
 	h4 {
@@ -37,6 +38,7 @@
     	text-align: center;
     	font-size: 13pt;
     	font-family: 'Jeju Gothic', serif;
+    	cursor:pointer;
 	}
 	
 		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a

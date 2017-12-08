@@ -6,8 +6,8 @@ public class Pharmacy implements Serializable{
 	String pharmCode;
 	String pharmPassword;
 	String pharmName;
-	int pharmLongitude;
-	int pharmLatitude;
+	double pharmLongitude;
+	double pharmLatitude;
 	String pharmAddress;
 	String pharmTel;
 	
@@ -21,7 +21,7 @@ public class Pharmacy implements Serializable{
 		this.pharmPassword = pharmPassword;
 	}
 
-	public Pharmacy(String pharmCode, String pharmPassword, String pharmName, int pharmLongitude, int pharmLatitude,
+	public Pharmacy(String pharmCode, String pharmPassword, String pharmName, double pharmLongitude, double pharmLatitude,
 			String pharmAddress, String pharmTel) {
 		super();
 		this.pharmCode = pharmCode;
@@ -59,19 +59,19 @@ public class Pharmacy implements Serializable{
 		this.pharmName = pharmName;
 	}
 
-	public int getPharmLongitude() {
+	public double getPharmLongitude() {
 		return pharmLongitude;
 	}
 
-	public void setPharmLongitude(int pharmLongitude) {
+	public void setPharmLongitude(double pharmLongitude) {
 		this.pharmLongitude = pharmLongitude;
 	}
 
-	public int getPharmLatitude() {
+	public double getPharmLatitude() {
 		return pharmLatitude;
 	}
 
-	public void setPharmLatitude(int pharmLatitude) {
+	public void setPharmLatitude(double pharmLatitude) {
 		this.pharmLatitude = pharmLatitude;
 	}
 
